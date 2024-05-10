@@ -36,12 +36,9 @@ class WeatherViewModel @Inject constructor(
 
     init {
         initSearchFlow()
-
-        repoImpl.lastCitySearched()?.let {
-            getWeatherReport(it)
-        } ?: kotlin.run {
-            getWeatherForCurrentLocation()
-        }
+        //If we have Location Permission display current weather else display last search city.
+        if (locationService.hasLocationPermission()) getWeatherForCurrentLocation()
+        else repoImpl.lastCitySearched()?.let { getWeatherReport(it) }
     }
 
     private fun initSearchFlow() {
@@ -66,7 +63,7 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
-    private fun getWeatherForCurrentLocation(){
+    private fun getWeatherForCurrentLocation() {
         launch {
             locationService.getCurrentLocation()?.let {
                 _weatherState.update { it.copy(isLocationGranted = true) }
