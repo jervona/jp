@@ -38,7 +38,9 @@ class WeatherViewModel @Inject constructor(
         initSearchFlow()
         //If we have Location Permission display current weather else display last search city.
         if (locationService.hasLocationPermission()) getWeatherForCurrentLocation()
-        else repoImpl.lastCitySearched()?.let { getWeatherReport(it) }
+        else repoImpl.lastCitySearched()?.let {
+            getWeatherReport(it)
+        }
     }
 
     private fun initSearchFlow() {
@@ -82,10 +84,12 @@ class WeatherViewModel @Inject constructor(
             when (val result = repoImpl.getWeatherReport(latLng)) {
                 is NetworkResult.Error -> {
                     //handle errors for example 404 errors
+                    _weatherState.update { it.copy(isLoading = false) }
                 }
 
                 is NetworkResult.Exception -> {
                     //Log or track Exception maybe display dialog
+                    _weatherState.update { it.copy(isLoading = false) }
                 }
 
                 is NetworkResult.Success -> {
