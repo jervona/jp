@@ -1,5 +1,6 @@
 package ja.interview.jpmccodingchallenge.screens.weather
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,8 +19,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,11 +44,19 @@ fun WeatherCard(
     state: CurrentWeatherState,
     modifier: Modifier = Modifier
 ) {
-    state.weatherData?.let { data->
+
+    AnimatedVisibility(
+        visible = state.weatherData != null ,
+        modifier = modifier
+    ) {
+        val data = requireNotNull(state.weatherData)
+
+        if (state.isLoading) CircularProgressIndicator(modifier = modifier)
+
         Card(
             colors = CardDefaults.cardColors(containerColor = DarkBlue),
             shape = RoundedCornerShape(10.dp),
-            modifier = modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -64,7 +76,7 @@ fun WeatherCard(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "${ data.currentTemp }°F",
+                    text = "${data.currentTemp}°F",
                     fontSize = 50.sp,
                     color = Color.White
                 )
@@ -77,36 +89,38 @@ fun WeatherCard(
                 Spacer(modifier = Modifier.height(32.dp))
             }
             FlowRow(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
                 horizontalArrangement = Arrangement.SpaceAround,
                 maxItemsInEachRow = 3
             ) {
                 WeatherDataDisplay(
-                    title = "Low:" ,
+                    title = "Low:",
                     value = "${data.tempLow}°F"
                 )
                 WeatherDataDisplay(
-                    title = "High:" ,
+                    title = "High:",
                     value = "${data.tempHigh}°F"
                 )
                 WeatherDataDisplay(
-                    title = "Feels Like:" ,
+                    title = "Feels Like:",
                     value = "${data.feelsLike}°F"
                 )
                 WeatherDataDisplay(
-                    title = "Humidity" ,
+                    title = "Humidity",
                     value = "${data.humidity} MPH"
                 )
                 WeatherDataDisplay(
-                    title = "Wind Speed" ,
+                    title = "Wind Speed",
                     value = "${data.windSpeed} MPH"
                 )
                 WeatherDataDisplay(
-                    title = "Sunrise" ,
+                    title = "Sunrise",
                     value = data.sunrise
                 )
                 WeatherDataDisplay(
-                    title = "Sunset" ,
+                    title = "Sunset",
                     value = data.sunset
                 )
             }
@@ -117,7 +131,7 @@ fun WeatherCard(
 @Composable
 fun WeatherDataDisplay(
     title: String,
-    value:String,
+    value: String,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -153,8 +167,5 @@ fun ImageWithLoader(imageUrl: String, modifier: Modifier = Modifier) {
             contentScale = ContentScale.Fit,
             modifier = modifier
         )
-        if (imageIsLoading.value) {
-            CircularProgressIndicator(Modifier.align(Alignment.Center))
-        }
     }
 }

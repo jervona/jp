@@ -1,6 +1,7 @@
 package ja.interview.jpmccodingchallenge.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -46,72 +47,60 @@ fun LocationSearchBar(
     modifier: Modifier
 ) {
     var expanded by remember { mutableStateOf(state.isSearching) }
-    val heightTextFields by remember { mutableStateOf(55.dp) }
-    var textFieldSize by remember { mutableStateOf(Size.Zero) }
     var editText by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier
             .padding(30.dp)
             .fillMaxWidth()
-            .clickable(
-                onClick = { expanded = false }
-            )
+            .clickable(onClick = { expanded = false })
     ) {
 
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(heightTextFields)
-                        .border(
-                            width = 1.8.dp,
-                            color = Color.Black,
-                            shape = RoundedCornerShape(15.dp)
-                        )
-                        .onGloballyPositioned { coordinates ->
-                            textFieldSize = coordinates.size.toSize()
-                        },
-                    value = editText,
-                    onValueChange = {
-                        editText = it
-                        expanded = true
-                        queryValue(it)
-                    },
-                    placeholder = { Text("Search: ex :NYC, New York, 10282") },
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        cursorColor = Color.Black
-                    ),
-                    textStyle = TextStyle(
+        Row(modifier = Modifier.fillMaxWidth()) {
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(
+                        width = 1.8.dp,
                         color = Color.Black,
-                        fontSize = 16.sp
                     ),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
-                    ),
-                    singleLine = true,
-                )
-            }
-            AnimatedVisibility(visible = expanded) {
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.LightGray,
-                    ),
-                ) {
-                    LazyColumn(
-                        modifier = Modifier.padding(bottom = 10.dp),
-                    ) {
-                        items(state.searchSuggestions.toImmutableList()) { item ->
-                            ItemsCategory(item.locationDisplayText) {
-                                expanded = false
-                                locationSelected(item.lat)
-                            }
-                        }
+                value = editText,
+                onValueChange = {
+                    editText = it
+                    expanded = it.isNotEmpty()
+                    if (it.isNotEmpty()) {
+                        queryValue(it)
+                    }
+                },
+                placeholder = { Text("Search: ex :NYC, New York, 10282") },
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    cursorColor = Color.Black
+                ),
+                textStyle = TextStyle(
+                    color = Color.Black,
+                    fontSize = 16.sp
+                ),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                ),
+                singleLine = true,
+            )
+        }
+
+        AnimatedVisibility(visible = expanded) {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .background(Color.LightGray),
+            ) {
+                items(state.searchSuggestions.toImmutableList()) { item ->
+                    ItemsCategory(item.locationDisplayText) {
+                        expanded = false
+                        locationSelected(item.lat)
                     }
                 }
             }

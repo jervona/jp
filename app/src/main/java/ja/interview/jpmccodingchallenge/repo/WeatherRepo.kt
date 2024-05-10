@@ -43,7 +43,8 @@ class WeatherRepoImpl(
                 } else {
                     getLocationString(userInput)
                 }
-            }.flattenConcat().flowOn(dispatcher)
+            }.flattenConcat()
+            .flowOn(dispatcher)
 
 
     override suspend fun getWeatherReport(latLng: LatLng) = withContext(dispatcher) {
@@ -65,7 +66,7 @@ class WeatherRepoImpl(
             val itemToEmit = it.onSuccessCopy { data ->
                 val locationList: List<LocationAutoComplete> = listOf(
                     LocationAutoComplete(
-                        "${data.name},${data.country}",
+                        "${data.name}, ${data.country}",
                         LatLng(data.lat, data.lon)
                     )
                 )
@@ -87,10 +88,10 @@ class WeatherRepoImpl(
             val itemToEmit = it.onSuccessCopy { list ->
                 val newList = list.map { item ->
                     LocationAutoComplete(
-                        "${item.name},${item.country}",
+                        "${item.name}, ${item.country}",
                         LatLng(item.lat, item.lon)
                     )
-                }
+                }.distinctBy { item -> item.locationDisplayText }
                 NetworkResult.Success(newList)
             }
             emit(itemToEmit)

@@ -83,9 +83,11 @@ class WeatherViewModel @Inject constructor(
                 is NetworkResult.Error -> {
                     //handle errors for example 404 errors
                 }
+
                 is NetworkResult.Exception -> {
                     //Log or track Exception maybe display dialog
                 }
+
                 is NetworkResult.Success -> {
                     _weatherState.update {
                         it.copy(

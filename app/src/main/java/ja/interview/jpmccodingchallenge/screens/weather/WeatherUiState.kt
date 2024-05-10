@@ -41,7 +41,7 @@ data class SearchState(
 
 fun CurrentWeatherData.toCurrentWeatherReport(): CurrentWeatherReport {
     return CurrentWeatherReport(
-        locationTitle = "$name,${sys.country}",
+        locationTitle = "$name, ${sys.country}",
         imageUrl = "https://openweathermap.org/img/wn/${weather.first().icon}@2x.png",
         currentTemp = main.temp.roundToInt(),
         weatherDescription = weather.first().description.replaceFirstChar { it.uppercase() },

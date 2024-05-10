@@ -51,15 +51,17 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Box {
+
+                        WeatherCard(
+                            weatherState,
+                            Modifier.align(Alignment.Center)
+                        )
+
                         LocationSearchBar(
                             searchListState,
                             viewModel::onSearchQuery,
                             viewModel::getWeatherReport,
                             Modifier.align(Alignment.TopCenter)
-                        )
-                        WeatherCard(
-                            weatherState,
-                            Modifier.align(Alignment.Center)
                         )
                     }
                 }
